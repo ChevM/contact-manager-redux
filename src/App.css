@@ -1,0 +1,24 @@
+[data-toggle="collapse"].collapsed i.fa-chevron-custom {
+  /* content: "\f078" !important; */
+  transition: transform 0.25s ease-in-out;
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+}
+[data-toggle="collapse"] i.fa-chevron-custom {
+  /* content: "\f078" !important; */
+  transition: transform 0.25s ease-in-out;
+  transform: rotate(0);
+  -webkit-transform: rotate(0);
+}
+
+[data-toggle="collapse"] i.fa-chevron-custom:before {
+  content: "\f077" !important;
+}
+
+.card-header.collapsed {
+  border-bottom: none;
+}
+
+li > i.fas.fa-fw {
+  padding-right: 1em;
+}
