@@ -18,14 +18,14 @@ export class Contacts extends Component {
     )
   };
   // ! Dummy API does not give unique IDs
-  async componentDidMount() {
-    // ? try catch?
-    await this.props.getAllContacts();
-  }
+  // async componentDidMount() {
+  //   // ? try catch?
+  //   await this.props.getAllContacts();
+  // }
   render() {
-    const [...contacts] = this.props.contacts;
+    const { contacts } = this.props;
     return (
-      <div className="col-sm-11 col-md-10 col-lg-9 mx-auto">
+      <section className="col-sm-11 col-md-10 col-lg-9 mx-auto">
         <h1 className="display-4 mb-3">
           <span className="text-primary">Contact</span> List
         </h1>
@@ -36,7 +36,7 @@ export class Contacts extends Component {
               <Contact key={contact.id} contact={contact} />
             ))}
         </div>
-      </div>
+      </section>
     );
   }
 }

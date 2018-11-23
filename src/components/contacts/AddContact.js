@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Consumer } from "../../context";
-import axios from "axios";
+import { connect } from "react-redux";
+import { addContact } from "../../actions/contactActions";
+import PropTypes from "prop-types";
 import _ from "lodash";
 import TextInputGroup from "../layout/TextInputGroup";
 
@@ -14,13 +15,17 @@ export class AddContact extends Component {
       errors: {}
     };
     this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
+  static propTypes = {
+    addContact: PropTypes.func.isRequired
+  };
 
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  async onSubmit(dispatch, e) {
+  async onSubmit(e) {
     e.preventDefault();
 
     const { name, email, phone } = this.state;
@@ -47,12 +52,8 @@ export class AddContact extends Component {
 
     if (_.isEmpty(errors)) {
       try {
-        const res = await axios.post(
-          "https://jsonplaceholder.typicode.com/users",
-          newContact
-        );
-
-        dispatch({ type: "ADD_CONTACT", payload: res.data });
+        // action dispatch
+        await this.props.addContact(newContact);
         // Clear state
         this.setState({
           name: "",
@@ -72,58 +73,51 @@ export class AddContact extends Component {
     const { name, email, phone, errors } = this.state;
 
     return (
-      <Consumer>
-        {value => {
-          const { dispatch } = value;
-          return (
-            <div className="col-sm-11 col-md-10 col-lg-9 mx-auto">
-              <div className="display-4 my-3">
-                <span className="text-primary">Add</span> Contact
-              </div>
-              <form
-                onSubmit={e => this.onSubmit(dispatch, e)}
-                className="mr-auto"
-              >
-                <TextInputGroup
-                  label="Name"
-                  placeholder="Enter Name..."
-                  name="name"
-                  value={name}
-                  required={false}
-                  onChange={this.onChange}
-                  error={errors.name}
-                  id=""
-                />
-                <TextInputGroup
-                  type="email"
-                  label="Email"
-                  placeholder="Enter Email..."
-                  name="email"
-                  value={email}
-                  onChange={this.onChange}
-                  error={errors.email}
-                  id=""
-                />
-                <TextInputGroup
-                  label="Phone"
-                  placeholder="Enter Phone..."
-                  name="phone"
-                  value={phone}
-                  onChange={this.onChange}
-                  error={errors.phone}
-                />
-                <input
-                  type="submit"
-                  value="Add Contact"
-                  className="btn btn-success btn-block"
-                />
-              </form>
-            </div>
-          );
-        }}
-      </Consumer>
+      <div className="col-sm-11 col-md-10 col-lg-9 mx-auto">
+        <div className="display-4 my-3">
+          <span className="text-primary">Add</span> Contact
+        </div>
+        <form onSubmit={this.onSubmit} className="mr-auto">
+          <TextInputGroup
+            label="Name"
+            placeholder="Enter Name..."
+            name="name"
+            value={name}
+            required={false}
+            onChange={this.onChange}
+            error={errors.name}
+            id=""
+          />
+          <TextInputGroup
+            type="email"
+            label="Email"
+            placeholder="Enter Email..."
+            name="email"
+            value={email}
+            onChange={this.onChange}
+            error={errors.email}
+            id=""
+          />
+          <TextInputGroup
+            label="Phone"
+            placeholder="Enter Phone..."
+            name="phone"
+            value={phone}
+            onChange={this.onChange}
+            error={errors.phone}
+          />
+          <input
+            type="submit"
+            value="Add Contact"
+            className="btn btn-success btn-block"
+          />
+        </form>
+      </div>
     );
   }
 }
 
-export default AddContact;
+export default connect(
+  null,
+  { addContact }
+)(AddContact);

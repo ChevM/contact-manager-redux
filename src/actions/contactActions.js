@@ -10,45 +10,16 @@ import {
 import _ from "lodash";
 import axios from "axios";
 
-export const addContact = (newContact, history) => async dispatch => {
-  const { name, email, phone } = newContact;
-
-  let errors = {};
-  // Validate input
-  if (_.isEmpty(name)) {
-    errors.name = "Name field is required";
-  }
-  if (_.isEmpty(email)) {
-    errors.email = "Email field is required";
-  }
-  if (_.isEmpty(phone)) {
-    errors.phone = "Phone field is required";
-  }
-
-  if (_.isEmpty(errors)) {
-    try {
-      const res = await axios.post(
-        "https://jsonplaceholder.typicode.com/users",
-        newContact
-      );
-
-      dispatch({ type: ADD_CONTACT, payload: res.data });
-      // // Clear state
-      // this.setState({
-      //   name: "",
-      //   email: "",
-      //   phone: "",
-      //   errors: {}
-      // });
-
-      // Redirect user to homepage
-      history.push("/");
-    } catch (err) {
-      console.log(err);
-      dispatch({ type: GET_ERRORS, payload: err });
-    }
-  } else {
-    dispatch({ type: GET_ERRORS, payload: errors });
+export const addContact = newContact => async dispatch => {
+  try {
+    const res = await axios.post(
+      "https://jsonplaceholder.typicode.com/users",
+      newContact
+    );
+    dispatch({ type: ADD_CONTACT, payload: await res.data });
+  } catch (err) {
+    console.log(err);
+    throw new Error(err);
   }
 };
 
