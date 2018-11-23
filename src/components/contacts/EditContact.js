@@ -1,8 +1,12 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withRouter } from "react-router-dom";
-import { getContact } from "../../actions/contactActions";
-import axios from "axios";
+import {
+  getContact,
+  updateContact,
+  clearContact
+} from "../../actions/contactActions";
 import _ from "lodash";
 import TextInputGroup from "../layout/TextInputGroup";
 
@@ -16,31 +20,38 @@ export class EditContact extends Component {
       errors: {}
     };
     this.onChange = this.onChange.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
   }
-  // static propTypes = {
-  //   contact: PropTypes.shape({
-  //     id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  //     name: PropTypes.string.isRequired,
-  //     email: PropTypes.string,
-  //     phone: PropTypes.string
-  //   }).isRequired
-  // };
+  static propTypes = {
+    getContact: PropTypes.func.isRequired,
+    updateContact: PropTypes.func.isRequired,
+    clearContact: PropTypes.func.isRequired,
+    contact: PropTypes.shape({
+      id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      name: PropTypes.string.isRequired,
+      email: PropTypes.string,
+      phone: PropTypes.string
+    }).isRequired
+  };
 
   async componentDidMount() {
     const { id } = this.props.match.params;
     try {
-      const { name, email, phone } = await this.props.getContact(id);
-
+      await this.props.getContact(id);
+      const { name, email, phone } = this.props.contact;
       this.setState({ name, email, phone });
     } catch (err) {
       console.log(err);
     }
   }
+  componentWillUnmount() {
+    this.props.clearContact();
+  }
   onChange(e) {
     this.setState({ [e.target.name]: e.target.value });
   }
 
-  async onSubmit(dispatch, e) {
+  async onSubmit(e) {
     e.preventDefault();
 
     const { id } = this.props.match.params;
@@ -69,12 +80,7 @@ export class EditContact extends Component {
 
     if (_.isEmpty(errors)) {
       try {
-        const res = await axios.put(
-          `https://jsonplaceholder.typicode.com/users/${id}`,
-          updatedContact
-        );
-
-        dispatch({ type: "UPDATE_CONTACT", payload: res.data });
+        await this.props.updateContact(updatedContact);
 
         // Clear state
         this.setState({
@@ -96,7 +102,7 @@ export class EditContact extends Component {
     const { name, email, phone, errors } = this.state;
 
     return (
-      <div className="col-sm-11 col-md-10 col-lg-9 mx-auto">
+      <section className="col-sm-11 col-md-10 col-lg-9 mx-auto">
         <div className="display-4 my-3">
           <span className="text-primary">Edit</span> Contact
         </div>
@@ -135,14 +141,16 @@ export class EditContact extends Component {
             className="btn btn-success btn-block"
           />
         </form>
-      </div>
+      </section>
     );
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  contact: state.contacts.contact
+});
 
 export default connect(
   mapStateToProps,
-  { getContact }
+  { getContact, updateContact, clearContact }
 )(withRouter(EditContact));

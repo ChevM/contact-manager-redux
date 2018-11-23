@@ -73,7 +73,7 @@ export class AddContact extends Component {
     const { name, email, phone, errors } = this.state;
 
     return (
-      <div className="col-sm-11 col-md-10 col-lg-9 mx-auto">
+      <section className="col-sm-11 col-md-10 col-lg-9 mx-auto">
         <div className="display-4 my-3">
           <span className="text-primary">Add</span> Contact
         </div>
@@ -112,7 +112,7 @@ export class AddContact extends Component {
             className="btn btn-success btn-block"
           />
         </form>
-      </div>
+      </section>
     );
   }
 }
