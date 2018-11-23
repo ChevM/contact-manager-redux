@@ -121,9 +121,8 @@ export class Contact extends Component {
     );
   }
 }
-const mapStateToProps = state => ({});
 
 export default connect(
-  mapStateToProps,
+  null,
   { deleteContact }
 )(Contact);
